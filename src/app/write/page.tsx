@@ -280,6 +280,7 @@ function ChatContent() {
           role: "user",
           content: `대한민국에서 다음 키워드에 해당하는 장소의 정확한 명칭과 주소를 한 줄씩 최대 3개 찾아줘. 한국에 없는 장소면 한국에 있는 비슷한 장소를 찾아줘. 각 줄은 "장소명 — 주소" 형식으로. 인사말, 설명, 추가 질문 절대 금지:\n"${destinationRaw}"`,
         }], [], model)
+        if (result.error) { setError(result.error); return }
         const lines = result.message.split("\n").map((l: string) => l.trim()).filter(Boolean).slice(0, 3)
         setDestinationResults(lines)
         if (lines.length === 0) setError("AI 검색 결과가 없습니다")
@@ -298,6 +299,7 @@ function ChatContent() {
         role: "user",
         content: `오늘은 ${today}입니다.\n다음 자연어 날짜를 아래 JSON만 정확히 출력해. 다른 말 절대 금지.\n{"start":"YYYY-MM-DD","end":"YYYY-MM-DD"}\n\n"${dateRaw}"`,
       }], [], model)
+      if (result.error) { setError(result.error); return }
       try {
         const parsed = JSON.parse(result.message)
         if (parsed.start) setStartDate(parsed.start)
@@ -331,7 +333,9 @@ function ChatContent() {
       : `체험학습 목적을 한 줄로 자연스럽게 다듬어줘. AI 티 안 나게. 인사말, 설명 절대 금지. 다듬은 텍스트만 출력:\n${raw}`
     try {
       const result = await chatAction(docType, [{ role: "user", content: prompt }], [], model)
+      if (result.error) { setError(result.error); return }
       const polished = result.message.trim()
+      if (!polished) { setError("AI 응답이 비어 있습니다"); return }
       if (target === "purpose") setPurpose(polished)
       else if (target === "plan") setPlan(polished)
       else if (target === "content") setContent(polished)

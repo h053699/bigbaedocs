@@ -19,7 +19,12 @@ export async function chatAction(
   message: string
   extractedData: Partial<ApplicationData | ReportData> | null
   complete: boolean
+  error?: string
 }> {
+  if (!process.env.APPLEHOUSE_API_KEY) {
+    return { message: "", extractedData: null, complete: false, error: "APPLEHOUSE_API_KEY가 서버에 설정되지 않았습니다" }
+  }
+
   const systemPrompt = `너는 텍스트 다듬기 도우미야. 사용자가 준 텍스트를 다듬어서 깔끔하게 출력해. 절대 인사말, 설명, 추가 질문을 하지 마. 오직 다듬어진 텍스트만 출력해.`
 
   const profile = context?.selectedProfileId && profiles
@@ -54,21 +59,29 @@ export async function chatAction(
     image_url: { url: `data:image/jpeg;base64,${img.base64}` },
   }))
 
-  const response = await client.chat.completions.create({
-    model,
-    messages: [
-      ...systemMessages,
-      ...messages.map((m) => ({
-        role: m.role as "user" | "assistant",
-        content: m.content,
-      })),
-    ],
-    stream: false,
-    temperature: 0.7,
-    max_tokens: 2000,
-  })
+  try {
+    const response = await client.chat.completions.create({
+      model,
+      messages: [
+        ...systemMessages,
+        ...messages.map((m) => ({
+          role: m.role as "user" | "assistant",
+          content: m.content,
+        })),
+      ],
+      stream: false,
+      temperature: 0.7,
+      max_tokens: 2000,
+    })
 
-  const raw = response.choices[0]?.message?.content ?? ""
-
-  return { message: raw.trim(), extractedData: null, complete: false }
+    const raw = response.choices[0]?.message?.content ?? ""
+    return { message: raw.trim(), extractedData: null, complete: false }
+  } catch (error) {
+    return {
+      message: "",
+      extractedData: null,
+      complete: false,
+      error: error instanceof Error ? error.message : "AI API 호출 실패",
+    }
+  }
 }
