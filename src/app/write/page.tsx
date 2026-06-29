@@ -122,7 +122,7 @@ function ChatContent() {
         data: {
           selectedProfileIds: Array.from(selectedProfileIds),
           destination, destinationFull, startDate, endDate, purpose,
-          plan, content, learnings, contentLength,
+          plan, content, learnings, contentLength, writingStyle,
           guardianName, guardianRelation, guardianPhone,
           travelType,
         },
@@ -137,7 +137,7 @@ function ChatContent() {
       } catch {}
     }, 500)
     return () => clearTimeout(timeout)
-  }, [selectedProfileIds, destination, destinationFull, startDate, endDate, purpose, plan, content, learnings, contentLength, guardianName, guardianRelation, guardianPhone, travelType, step, draftId, docType])
+  }, [selectedProfileIds, destination, destinationFull, startDate, endDate, purpose, plan, content, learnings, contentLength, writingStyle, guardianName, guardianRelation, guardianPhone, travelType, step, draftId, docType])
   const [pfGrade, setPfGrade] = useState("")
   const [pfClass, setPfClass] = useState("")
   const [pfNumber, setPfNumber] = useState("")
