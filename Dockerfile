@@ -12,7 +12,7 @@ WORKDIR /app
 
 ENV NODE_ENV=production
 
-RUN groupadd --system --gid 1001 nextjs && useradd --system --uid 1001 nextjs
+RUN groupadd -f --system --gid 1001 nextjs && id -u nextjs >/dev/null 2>&1 || useradd --system --uid 1001 -g nextjs nextjs
 
 COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nextjs /app/.next/standalone ./
