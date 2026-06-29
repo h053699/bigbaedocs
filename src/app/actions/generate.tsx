@@ -223,7 +223,7 @@ export async function generateHwpAction(
         "{19}": docType === "application" ? ((d as ApplicationData).travelType === "international" ? ((d as ApplicationData).guardianPhone || " ") : " ") : " ",
         "{20}": String(sub.getFullYear()), "{21}": String(sub.getMonth() + 1), "{22}": String(sub.getDate()),
         "{23}": d.studentName || " ",
-        "{24}": d.guardianName || " ",
+        "{24}": (d as ApplicationData).guardianName || " ",
       }
 
       const paragraphLimits: Record<string, { maxCharsPerLine: number; maxLines: number }> =
